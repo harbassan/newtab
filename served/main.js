@@ -52,6 +52,8 @@ function search(query) {
 
   if (query.match(regexp)) {
     query = query.startsWith("http") ? query : `https://${query}`;
+  } else if (query.startsWith(":")) {
+    query = `http://localhost${query}`;
   } else if (!active_bang) {
     query = config.DEFAULT_SEARCH_ENGINE.replace("{{{s}}}", encoded);
   } else {
@@ -128,10 +130,15 @@ document.addEventListener("keydown", (event) => {
       reset_shortcuts_input();
       search_input.focus();
       break;
+    case ":":
+      event.preventDefault();
+      reset_shortcuts_input();
+      search_input.focus();
+      search_input.value = ":";
+      break;
     case "'":
     case "!":
       event.preventDefault();
-      shortcuts_input.value = "";
       reset_shortcuts_input();
       is_banging = true;
       search_input.focus();
@@ -152,6 +159,13 @@ document.addEventListener("keydown", (event) => {
       shortcuts_input.value = "";
       shortcuts_context_el.textContent = "f";
       shortcut_context = bookmarks_manager.set_folder_by_shortcut;
+      break;
+    case ":":
+      event.preventDefault();
+      shortcuts_input.value = "";
+      reset_shortcuts_input();
+      is_banging = true;
+      search_input.focus();
       break;
     case " ":
       event.preventDefault();
